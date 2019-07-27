@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianxing.springboot.dao.EmployeeDao">
+<resultMap type="employee" id="EmployeeMap">
+<id column="eid" property="eId"/>
+<result column="eName" property="eName"/>
+<result column="wages" property="wages"/>
+<result column="bonus" property="bonus"/>
+<result column="pName" property="pName"/>
+<result column="joinTime" property="joinTime"/>
+<association property="department" javaType="department">
+<id column="did" property="dId"/>
+<result column="dname" property="dName"/>
+<result column="daddress" property="dAddress"/>
+</association>
+</resultMap>
+<select id="getEmployee" resultMap="EmployeeMap">
+SELECT e.*,d.`daddress`,d.`dname` FROM
+`department` AS d
+ JOIN `employee` AS e
+ ON d.`did`=e.`did`
+ WHERE d.`did`=#{dId}
+</select>
+<delete id="removeEmployee">
+delete from employee where eid=#{eId};
+</delete>
+</mapper>

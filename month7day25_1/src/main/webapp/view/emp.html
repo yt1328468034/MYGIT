@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+</head>
+<body>
+<table id="table" class="table table-hover table-striped  text-center">
+<thead>
+      <tr>
+      <th>员工名称</th>
+       <th>员工职务</th>
+        <th>员工薪资</th>
+        <th>员工奖金</th>
+        <th>员工入职时间</th>
+        <th>操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="e in list" >
+      <td>{{e.eName}}</td>
+      <td>{{e.pName}}</td>
+      <td>{{e.wages}}</td>
+      <td>{{e.bonus}}</td>
+      <td>{{e.joinTime}}</td>
+      <td><a title="删除" @click="removeEmployee(e.eId)"><span class="glyphicon glyphicon-trash"></span></a></td>
+      </tr>
+      </tbody>
+</table>
+
+</body>
+<script>
+	
+		addVm=new Vue({
+			el:"#table",
+			data:{
+				list:[]
+			},
+			methods:{
+				getEmployee:function(){
+					let t=this;
+					let dId=window.sessionStorage.getItem("dId");
+					$.ajax({
+						type:"get",
+						async:false,
+						url:"http://127.0.0.1:8080/api/employees/"+dId,
+						dataType:"json",
+						success:function(data){
+							t.$data.list=data;
+						}
+					});
+				},
+				removeEmployee:function(eId){
+					let t=this;
+        			$.ajax({
+        				type:"delete",
+        				url:"http://127.0.0.1:8080/api/employees/"+eId,
+        				async:true,
+        				dataType:"json",
+        				success:function(data){
+        					if(data.code=="200"){
+        						t.getEmployee();
+        						showAlertDialog('删除成功!!还有'+t.list.length+"位员工");
+								closeWindowDialog();
+								listCnt.goToIndex();
+							}else{
+								showAlertDialog('删除失败');
+							}
+        				}
+        			});
+        	}
+				
+			}
+		});
+		addVm.getEmployee();
+	</script>
+</html>
